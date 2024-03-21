@@ -31,6 +31,7 @@ export const getProduct = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const createProduct = catchAsyncErrors(async (req, res) => {
+        req.body.user = req.user._id;
         const product = new Product(req.body);
         await product.save();
         res.status(201).json({product});

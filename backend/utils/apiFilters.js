@@ -12,7 +12,6 @@ class APIFilters{
                 $options: "i",
             },
             } : {};
-
         this.query=this.query.find({...keyword});
         return this;
     }

@@ -1,10 +1,9 @@
 import express from 'express';
+const app = express();
 import dotenv from 'dotenv';
-import productRoutes from './routes/products.js';
 import {connectDatabase} from "./config/dbConnect.js";
 import errorMiddleware from './middlewares/error.js';
-
-const app = express();
+import cookieParser from "cookie-parser";
 
 //Handle Uncaught exceptions
 process.on("uncaughtException",(err)=>{
@@ -19,9 +18,14 @@ dotenv.config({path:'backend/config/config.env'});
 connectDatabase();
 
 app.use(express.json());
+app.use(cookieParser());
 
 //Import all routes
-app.use('/api',productRoutes);
+import productRoutes from './routes/products.js';
+import authRoutes from './routes/auth.js';
+
+app.use("/api", productRoutes);
+app.use("/api", authRoutes);
 
 //Using error middleware
 app.use(errorMiddleware);

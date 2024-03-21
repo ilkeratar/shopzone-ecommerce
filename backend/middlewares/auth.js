@@ -1,0 +1,27 @@
+import catchAsyncErrors from "./catchAsyncErrors.js";
+import ErrorHandler from "../utils/errorHandler.js";
+import jwt from "jsonwebtoken";
+import User from "../modules/user.js";
+
+
+//Check if the user authenticated or not
+export const isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
+    const { token } = req.cookies;
+    if (!token) return next(new ErrorHandler("Please first to access this resource"),401);
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id)
+
+    next();
+});
+
+//Authorize Roles
+export const authorizedUser = (...roles) => {
+    return (req, res, next) => {
+        console.log(req.user);
+        if(!roles.includes(req.user.role)) {
+           return next(new ErrorHandler(`${req.user.role} is not allowed to access this resource`),403);
+        }
+        next();
+    }
+}
