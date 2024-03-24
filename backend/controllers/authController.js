@@ -6,7 +6,7 @@ import {getResetPasswordTemplate} from "../utils/emailTemplates.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
 
-export const registerUser = catchAsyncErrors(async (req, res) => {
+export const registerUser = catchAsyncErrors(async (req, res, next) => {
    const { name, email, password } = req.body;
    const user = await User.create({
        name,
@@ -29,7 +29,7 @@ export const loginUser = catchAsyncErrors(async (req, res, next)=> {
     assignToken(user, 201, res);
 })
 
-export const logOut = catchAsyncErrors(async (req, res) => {
+export const logOut = catchAsyncErrors(async (req, res, next) => {
     res.cookie( "token", null, {
         expires: new Date(Date.now()),
         httpOnly: true
@@ -95,6 +95,21 @@ export const resetPassword = catchAsyncErrors( async (req, res, next) => {
     await user.save();
 
     assignToken(user, 200, res);
+})
+
+export const updatePassword = catchAsyncErrors(async (req, res,next) => {
+    const user = await User.findById(req?.user?._id).select("+password");
+
+    //Check the previous user password
+    const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+    if(!isPasswordMatched) return next(new ErrorHandler("Old password is incorrect",400));
+
+    user.password = req.body.password;
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+    })
 })
 
 

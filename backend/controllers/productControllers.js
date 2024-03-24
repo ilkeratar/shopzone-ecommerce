@@ -3,7 +3,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import APIFilters from "../utils/apiFilters.js";
 
-export const getProducts = catchAsyncErrors(async (req, res) => {
+export const getProducts = catchAsyncErrors(async (req, res, next) => {
         const resPerPage= 4;
         const apiFilters = new APIFilters(Product, req.query).search().filters();
 
@@ -30,7 +30,7 @@ export const getProduct = catchAsyncErrors(async (req, res, next) => {
 
 });
 
-export const createProduct = catchAsyncErrors(async (req, res) => {
+export const createProduct = catchAsyncErrors(async (req, res, next) => {
         req.body.user = req.user._id;
         const product = new Product(req.body);
         await product.save();
