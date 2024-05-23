@@ -68,7 +68,7 @@ const ProductDetails = () => {
             starRatedColor="#ffb829"
             numberOfStars={5}
             name="rating"
-            starDimension="24px"
+            starDimension="25px"
             starSpacing="1px"
           />
           <span id="no-of-reviews" className="pt-1 ps-2">
